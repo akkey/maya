@@ -82,4 +82,3 @@ proc vertex_adjust_waight(float $waightNum){
 }
 
 show_UI();
-
