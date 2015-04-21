@@ -8,22 +8,20 @@ proc show_UI(){
 	int $buttonWidth = 300;
     
     columnLayout;
-        text -label "初期設定" -width $buttonWidth -backgroundColor 0.2 0.2 0.2 -align "center";
-        button -label "ジョイントを選択" -command ("select_joint()") -width $buttonWidth;
-        button -label "メッシュを選択" -command ("select_skin_cluster()") -width $buttonWidth;
+        text -label "Initial setting" -width $buttonWidth -backgroundColor 0.2 0.2 0.2 -align "center";
+        button -label "Select joint" -command ("select_joint()") -width $buttonWidth;
+        button -label "Select Mesh" -command ("select_skin_cluster()") -width $buttonWidth;
         
-        //ウエイト調整スライダー
-        text -label "ウエイト値の調整" -width $buttonWidth -backgroundColor 0.2 0.2 0.2 -align "center";
-        button -label "選択箇所（頂点・フェース・エッジ）の確定" -command ("select_confirm()") -width $buttonWidth;
-        floatSliderGrp -label "ウエイト値" -field true -min 0.1 -max 1.0 -step 0.05 -value 0.5 -width $buttonWidth radiusSlider;
-        button -label "選択箇所のウエイト値を変換" -command ("to_vertex()") -width $buttonWidth;
+        text -label "Adjust Waight" -width $buttonWidth -backgroundColor 0.2 0.2 0.2 -align "center";
+        button -label "Selected Confirm(vertex face edge)" -command ("select_confirm()") -width $buttonWidth;
+        floatSliderGrp -label "Waight value" -field true -min 0.1 -max 1.0 -step 0.05 -value 0.5 -width $buttonWidth radiusSlider;
+        button -label "Adjust selected waight" -command ("to_vertex()") -width $buttonWidth;
         
     setParent ..;
     
     showWindow;
 }
 
-//ジョイント選択
 proc select_joint(){
     global string $jointName;
     string $jointNameArray[];
@@ -31,7 +29,6 @@ proc select_joint(){
     $jointName = $jointNameArray[0];  
 }
 
-//メッシュ選択
 proc select_skin_cluster(){
     string $selectMeshArray[];
     string $selectMesh;
@@ -41,7 +38,6 @@ proc select_skin_cluster(){
     $skinClusterName = `get_skin_cluster($selectMesh)`;
 }
 
-//スキンクラスタ名取得
 proc string get_skin_cluster(string $mesh){
     string $skinClusterName;
 	string $history[] = `listHistory $mesh`;
@@ -53,7 +49,6 @@ proc string get_skin_cluster(string $mesh){
 	return $skinClusterName;
 }
 
-//頂点選択へ変換
 proc to_vertex(){
     string $selectComponent[];
     $selectComponent = `ls -selection`;
@@ -61,11 +56,9 @@ proc to_vertex(){
     $selectComponent = `filterExpand -sm 31 $selectComponent`;
     select $selectComponent;
     
-    //ウエイトをスライダーから取得
     float $val;
 	$val = `floatSliderGrp -q -value radiusSlider`;
     
-    //選択した頂点ウエイトを変換
     vertex_adjust_waight($val);
 }
 
@@ -74,7 +67,6 @@ proc select_confirm(){
     $selectComponent = `ls -selection`;
 }
 
-//選択した頂点ウエイトを1.0に変換
 proc vertex_adjust_waight(float $waightNum){
     global string $selectComponent[];
 
@@ -83,7 +75,7 @@ proc vertex_adjust_waight(float $waightNum){
     
     global string $skinClusterName;
     global string $jointName;
-    //頂点ウエイトの変換
+
     for($i in $oVcount){
         skinPercent -transformValue $jointName $waightNum $skinClusterName $selectComponent;
     }
